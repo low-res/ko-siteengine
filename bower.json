@@ -1,0 +1,35 @@
+{
+  "name": "ko-siteengine",
+  "description": "simple wired up router, pagetransition and preloading setup for ko based apps",
+  "version": "0.0.1",
+  "private": false,
+  "main":"dist/pageManager.js",
+  "dependencies": {
+    "crossroads": "~0.12",
+    "hasher": "~1.2",
+    "requirejs": "~2.1",
+    "requirejs-text": "~2.0",
+    "knockout": "~3.x",
+    "jquery": "~2.1",
+    "PreloadJS": "0.4.0",
+    "amplify": "1.1.2",
+    "velocity": "1.2.1",
+    "lodash": "~3.6.0"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower-requirejs/bin/bower-requirejs.js -c src/require.config.js"
+  },
+  "keywords": [
+    "knockout"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "src",
+    "package.json",
+    "karma.conf.js",
+    "gulpfile.js"
+  ]
+}
