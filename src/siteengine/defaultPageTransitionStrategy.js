@@ -19,6 +19,7 @@ define([
         this.currentPageVmInstance      = null; // hold a reference to the current pages viewModel
         this.componentNameNewPage       = null; // name of the new page component
         this.newPageVmInstance          = null; // hold a reference to the next page viewModel
+        this.newPageVmParams            = null;
         this.newPageUrl                 = "";
 
         this.pageViewModels             = {};
@@ -29,10 +30,12 @@ define([
      * handlePageChange
      * @param {object} newRoute
      */
-    p.handlePageChange = function( newRouteParams, url ) {
+    p.handlePageChange = function( newRouteParams, url, additionalPageParams ) {
+        console.log( newRouteParams, url, additionalPageParams )
         var self = this;
         var componentName = newRouteParams.page;
         this.newPageUrl = url;
+        this.newPageVmParams = additionalPageParams;
 
         // first check if we have this view model already created
         if( this.pageViewModels[url] ) {
@@ -47,8 +50,6 @@ define([
                 self._dummyTransition(componentName);
             }
         }
-
-
     }
 
 
@@ -106,10 +107,7 @@ define([
 
 
     p.appendNewPage = function( ) {
-        var pageSettings = {
-            name: this.componentNameNewPage,
-            params: {instance: this.newPageVmInstance }
-        }
+        var pageSettings = this._generatePageSettings(this.componentNameNewPage, this.newPageVmInstance);
         this.currentPageVmInstance = this.newPageVmInstance;
         this.newPageVmInstance = null;
         this.pageComponentDefinition( pageSettings );
@@ -157,13 +155,17 @@ define([
      * @private
      */
     p._dummyTransition = function(componentNameNewPage) {
-        var pageSettings = {
-            name: componentNameNewPage,
-            params: { }
-        }
+        var pageSettings = this._generatePageSettings(componentNameNewPage);
         this.pageComponentDefinition( pageSettings );
     }
 
+    p._generatePageSettings = function( compName, vmInstance ){
+        var o = {}
+        o.name = compName;
+        o.params = this.newPageVmParams ? this.newPageVmParams : {};
+        if(vmInstance) o.params.instance = vmInstance;
+        return o;
+    };
 
     return DefaultPageTransitionStrategy;
 

@@ -50,6 +50,14 @@ define([
         hasher.setHash(this._getPrevPageHash());
     }
 
+    p.findRoute = function(idOrUrl){
+        var r = null;
+        ko.utils.arrayForEach( this.routes, function(item) {
+            if( item.id == idOrUrl || item.url == idOrUrl ) r = item;
+        } );
+        return r;
+    }
+
     p._getNextPageHash = function () {
         var idx = this.routes.indexOf(this.currentRoute());
         var nextRoute = this.routes[idx];
@@ -63,7 +71,6 @@ define([
         if (idx > 0) prevRoute = this.routes[idx - 1];
         return prevRoute.url;
     }
-
 
     /**
      * _initRoutes
@@ -94,7 +101,6 @@ define([
         function parseHash(newHash, oldHash) {
             self.currentHash = newHash;
             crossroads.parse(newHash);
-
         }
 
         function parseInitHash(newHash, oldHash) {

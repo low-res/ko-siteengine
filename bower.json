@@ -10,7 +10,7 @@
     "requirejs": "~2.1",
     "requirejs-text": "~2.0",
     "knockout": "~3.x",
-    "jquery": "~2.1",
+    "jquery": "~1.9",
     "PreloadJS": "0.4.0",
     "amplify": "1.1.2",
     "velocity": "1.2.1",
