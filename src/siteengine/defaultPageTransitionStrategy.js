@@ -31,7 +31,6 @@ define([
      * @param {object} newRoute
      */
     p.handlePageChange = function( newRouteParams, url, additionalPageParams ) {
-        console.log( newRouteParams, url, additionalPageParams )
         var self = this;
         var componentName = newRouteParams.page;
         this.newPageUrl = url;
