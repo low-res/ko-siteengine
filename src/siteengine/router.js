@@ -28,7 +28,7 @@ define([
 
     p.setRoutes = function( routes ) {
         this.routes = routes;
-        this._initRoutes(routes);
+        this._initRoutes();
         this._activateCrossroads();
         hasher.setHash( this.routes[0].url );
     }
@@ -51,10 +51,28 @@ define([
     }
 
     p.findRoute = function(idOrUrl){
-        var r = null;
-        ko.utils.arrayForEach( this.routes, function(item) {
-            if( item.id == idOrUrl || item.url == idOrUrl ) r = item;
-        } );
+        var searchRoutes = function(routes, idOrUrl) {
+            var r = null;
+            ko.utils.arrayForEach( routes, function(item) {
+                if( item.id == idOrUrl || item.url == idOrUrl ) {
+                    r = item;
+                } else {
+                    if( item.children && r==null ) r = searchRoutes(item.children, idOrUrl);
+                }
+            } );
+            return r;
+        }
+        return searchRoutes(this.routes, idOrUrl);
+    }
+
+    p.rootLine = function() {
+        var r = [ this.currentRoute() ];
+        var p = this.currentRoute().parent;
+        while(p) {
+            var pRoute = this.findRoute(p.id);
+            r.push( pRoute );
+            p = pRoute.parent;
+        }
         return r;
     }
 
@@ -77,17 +95,22 @@ define([
      * @param routes
      * @private
      */
-    p._initRoutes = function (routes) {
+    p._initRoutes = function () {
         var self = this;
-        ko.utils.arrayForEach(routes, function (route) {
-            crossroads.addRoute(route.url, function (requestParams) {
-                var r = ko.utils.extend(requestParams, route.params);
-                self.currentRoute(route);
-                self.routeChanged.dispatch(r, route.url);
+
+        var setupRoutes = function( childRoutes, parentRoute ) {
+            ko.utils.arrayForEach(childRoutes, function (route) {
+                route.parent = parentRoute;
+                crossroads.addRoute(route.url, function (requestParams) {
+                    var r = ko.utils.extend(requestParams, route.params);
+                    self.currentRoute(route);
+                    self.routeChanged.dispatch(r, route.url);
+                });
+
+                if( route.children ) setupRoutes(route.children, route);
             });
-        });
-
-
+        }
+        setupRoutes(this.routes, null);
     }
 
 

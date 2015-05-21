@@ -21,7 +21,7 @@ define([
 
       });
 
-      iit('should be possible to pass additional parameters to page components', function(){
+      it('should be possible to pass additional parameters to page components', function(){
           var routes =  [
               { id:1, url: 'timenetries',   params: { page: 'timeentries-page'    } },
               { id:2, url: 'jobs',          params: { page: 'jobs-page'           } }
