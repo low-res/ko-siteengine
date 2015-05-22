@@ -32,8 +32,8 @@ define([
 
 
     p.changePageTo = function( idOrUrl, additionalParams ) {
-        this.newPageParams = additionalParams;
-        var route = router.findRoute(idOrUrl);
+        this.newPageParams  = additionalParams;
+        var route           = router.findRoute(idOrUrl);
         router.gotoRoute( route );
     }
 

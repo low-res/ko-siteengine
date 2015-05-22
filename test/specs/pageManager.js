@@ -9,7 +9,7 @@ define([
           expect(true).toBeTruthy();
       });
 
-      it('should change to gages specified by id or url', function(){
+      it('should change to pages specified by id or url', function(){
           var routes =  [
               { id:1, url: 'timenetries',   params: { page: 'timeentries-page'    } },
               { id:2, url: 'jobs',          params: { page: 'jobs-page'           } }
@@ -36,6 +36,22 @@ define([
           pm.init(routes);
           pm.changePageTo('timenetries', {additionalParam: 123} );
           expect(pm.currentPage()).toEqual( { name : 'timenetries-page', params : { additionalParam:123 } } );
+      });
+
+      it('should change to nested pages specified by id or url', function(){
+          childRoute = { id:2, url: 'client/settings/defaults', params: { page: 'jobs-page' } };
+          var routes =  [
+              { id:5, url: 'client',    params: { page: 'page'    }, children:[
+                  { id:3, url: 'client/detail',     params: { page: 'page'    } },
+                  { id:4, url: 'client/settings',   params: { page: 'page-settings'    }, children:[
+                      childRoute
+                  ] }
+              ] }
+          ];
+          var pm = new PageManager();
+          pm.init(routes);
+          pm.changePageTo('client/settings');
+          expect(pm.currentPage()).toEqual( { name : 'page-settings', params : {  } } );
       });
 
   });

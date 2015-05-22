@@ -25,7 +25,7 @@ define([
           var childRoute;
 
           beforeEach( function(){
-              crossroads.removeAllRoutes();
+
               childRoute = { id:2, url: 'client/settings/defaults', params: { page: 'jobs-page' } };
               var routes =  [
                   { id:5, url: 'client',    params: { page: 'page'    }, children:[

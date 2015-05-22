@@ -34,8 +34,9 @@ define([
     }
 
     p.gotoRoute = function ( route ) {
-        var idx = this.routes.indexOf( route );
-        if( idx > -1 )hasher.setHash(this.routes[idx].url);
+        var knownRoute = this.findRoute( route.id );
+        if( knownRoute ) hasher.setHash( knownRoute.url );
+        else console.wran( "the given route is not registerd! ", route );
     }
 
     p.gotoPage = function (idx) {
@@ -97,7 +98,7 @@ define([
      */
     p._initRoutes = function () {
         var self = this;
-
+        crossroads.removeAllRoutes();
         var setupRoutes = function( childRoutes, parentRoute ) {
             ko.utils.arrayForEach(childRoutes, function (route) {
                 route.parent = parentRoute;
