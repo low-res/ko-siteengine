@@ -1,5 +1,5 @@
 define([
-    "router",
+    "siteengine/router",
     "crossroads"
 ], function(router, crossroads) {
 

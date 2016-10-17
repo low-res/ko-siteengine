@@ -1,5 +1,5 @@
 define([
-    "pageManager"
+    "siteengine/pageManager"
 ], function(PageManager) {
 
   describe('pageManager Tests', function() {
