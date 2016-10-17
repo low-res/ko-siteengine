@@ -6,7 +6,6 @@ var require = {
         router: "siteengine/router",
         preloader: "siteengine/preloader",
         defaultPageTransitionStrategy: "siteengine/defaultPageTransitionStrategy",
-
         amplify: "bower_components/amplify/lib/amplify",
         crossroads: "bower_components/crossroads/dist/crossroads",
         hasher: "bower_components/hasher/dist/js/hasher",
