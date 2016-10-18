@@ -1,6 +1,6 @@
 define([
     "knockout",
-    "./router",
+    "./router.js",
     "./defaultPageTransitionStrategy.js"
 ], function(ko, router, PageTransition) {
 
