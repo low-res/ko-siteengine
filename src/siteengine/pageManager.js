@@ -1,7 +1,7 @@
 define([
     "knockout",
-    "./router.js",
-    "./defaultPageTransitionStrategy.js"
+    "router",
+    "pagetransition"
 ], function(ko, router, PageTransition) {
 
     var p       = PageManamger.prototype;
@@ -44,6 +44,12 @@ define([
      */
     p.handlePageChange = function( newRoute, url ) {
         this.pageTransition.handlePageChange( newRoute, url, this.newPageParams );
+    }
+
+
+
+    p.setPageTransitionObject = function( newPageTransitionObject ) {
+        this.pageTransition = newPageTransitionObject;
     }
 
     return PageManamger;

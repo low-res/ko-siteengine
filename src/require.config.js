@@ -13,7 +13,12 @@ var require = {
         velocity:       "bower_components/velocity/velocity",
         "velocity.ui":  "bower_components/velocity/velocity.ui",
         "signals":      "bower_components/js-signals/dist/signals",
-        "preloadjs":    "bower_components/PreloadJS/lib/preloadjs-0.4.0.min"
+        "preloadjs":    "bower_components/PreloadJS/lib/preloadjs-0.4.0.min",
+
+        "pagemanager":      "siteengine/pageManager",
+        "router":           "siteengine/router",
+        "pagetransition":   "siteengine/defaultPageTransitionStrategy",
+        "preloader":        "siteengine/preloader",
     },
     shim: {
         velocity: {

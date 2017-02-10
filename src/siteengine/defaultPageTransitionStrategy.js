@@ -2,7 +2,7 @@ define([
     "knockout",
     "jquery",
     "velocity",
-    "./preloader.js"
+    "preloader"
 ],  function(ko, $, velocity, preloader) {
 
     var p = DefaultPageTransitionStrategy.prototype;
