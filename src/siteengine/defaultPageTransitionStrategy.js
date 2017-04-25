@@ -1,9 +1,8 @@
 define([
     "knockout",
     "jquery",
-    "velocity",
     "preloader"
-],  function(ko, $, velocity, preloader) {
+],  function(ko, $, preloader) {
 
     var p = DefaultPageTransitionStrategy.prototype;
     var self = this;
@@ -158,6 +157,7 @@ define([
         this.pageComponentDefinition( pageSettings );
     }
 
+
     p._generatePageSettings = function( compName, vmInstance ){
         var o = {}
         o.name = compName;
@@ -165,6 +165,7 @@ define([
         if(vmInstance) o.params.instance = vmInstance;
         return o;
     };
+
 
     return DefaultPageTransitionStrategy;
 
