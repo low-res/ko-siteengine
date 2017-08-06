@@ -1,7 +1,7 @@
 define([
     "knockout",
-    "router",
-    "pagetransition"
+    "src/siteengine/router",
+    "src/siteengine/defaultPageTransitionStrategy"
 ], function(ko, router, PageTransition) {
 
     var p       = PageManamger.prototype;

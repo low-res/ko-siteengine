@@ -1,6 +1,6 @@
 define([
     "knockout",
-    "crossroads",
+    "millermedeiros/crossroads",
     "hasher",
     "signals"
 ], function (ko, crossroads, hasher, signals) {

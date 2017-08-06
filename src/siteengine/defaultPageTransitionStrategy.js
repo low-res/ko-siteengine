@@ -1,7 +1,7 @@
 define([
     "knockout",
     "jquery",
-    "preloader"
+    "src/siteengine/preloader"
 ],  function(ko, $, preloader) {
 
     var p = DefaultPageTransitionStrategy.prototype;

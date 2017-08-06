@@ -1,6 +1,6 @@
 define([
-    "router",
-    "crossroads"
+    "src/siteengine/router",
+    "millermedeiros/crossroads"
 ], function(router, crossroads) {
 
   describe('router Tests', function() {

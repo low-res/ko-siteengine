@@ -1,7 +1,7 @@
 define([
     'amplify',
     'jquery',
-    'preloadjs'
+    'CreateJS/PreloadJS'
 ], function (amplify, $) {
 
     var _handleLoaderEvent = function( e ){
