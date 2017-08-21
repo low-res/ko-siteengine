@@ -8,7 +8,7 @@
   "license": "MIT",
   "format": "amd",
   "jspm": {
-    "main": "formater",
+    "main": "core/pageManager",
     "directories": {
       "lib": "src",
       "test": "tests"
