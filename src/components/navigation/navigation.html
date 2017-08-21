@@ -1,0 +1,6 @@
+<div class="navigation">
+    <h2>Navigation</h2>
+    <ul data-bind="foreach:routes">
+        <li data-bind="text:$data.url, css:{active:$data==$parent.route()}, click:$parent.navigate"></li>
+    </ul>
+</div>

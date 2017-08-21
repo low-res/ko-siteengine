@@ -1,0 +1,9 @@
+<!-- ko if: isError() -->
+    <p style="color:red;" data-bind="text:errorMsg"></p>
+<!-- /ko -->
+
+<!-- ko if: !isError() -->
+    <!-- ko if: pageManager.currentPage().name && pageManager.currentPage().params -->
+        <!-- ko component: { name:pageManager.currentPage().name, params:pageManager.currentPage().params } --><!-- /ko -->
+    <!-- /ko -->
+<!-- /ko -->

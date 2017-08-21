@@ -1,9 +1,10 @@
 define([
     "knockout",
-    "millermedeiros/crossroads",
-    "hasher",
-    "signals"
-], function (ko, crossroads, hasher, signals) {
+    "lodash",
+    "krasimir/navigo",
+    "postal",
+    "./engineevents"
+], function (ko, _, Navigo, postal, events) {
 
     var p = Router.prototype;
 
@@ -15,40 +16,46 @@ define([
      */
     function Router() {
         var self = this;
-        var currentRoute = this.currentRoute = ko.observable({});
-        this.initalHash = null;
-        this.currentHash = null;
-        this.routes = [];
-        this.routeChanged = new signals.Signal();
-        this.currentRouteIdx = ko.computed(function () {
-            var idx = self.routes.indexOf(self.currentRoute());
-            return idx;
-        });
+        this.currentRoute   = ko.observable({});
+        this.routes         = [];
+
+        // eventbus
+        this.eventchannel   = postal.channel( events.CHANNEL_ROUTER );
+
     }
 
     p.setRoutes = function( routes ) {
         this.routes = routes;
+
+        // setup navigo https://github.com/krasimir/navigo
+        var root = null;
+        var useHash = true; // Defaults to: false
+        var hash = '#!'; // Defaults to: '#'
+        this.navigo = new Navigo(root, useHash, hash);
+
         this._initRoutes();
-        this._activateCrossroads();
-        hasher.setHash( this.routes[0].url );
+    }
+
+    p.getRoutes = function() {
+        return this.routes;
     }
 
     p.gotoRoute = function ( route ) {
-        var knownRoute = this.findRoute( route.id );
-        if( knownRoute ) hasher.setHash( knownRoute.url );
-        else console.wran( "the given route is not registerd! ", route );
+        this.gotoPage(route.id);
     }
 
-    p.gotoPage = function (idx) {
-        hasher.setHash(this.routes[idx].url);
+    p.gotoPage = function (idOrUrl) {
+        var knownRoute = this.findRoute( idOrUrl );
+        if( knownRoute ) this.navigo.navigate( knownRoute.url );
+        else console.wran( "the given route id is not registerd! ", idOrUrl );
     }
 
     p.nextPage = function () {
-        hasher.setHash(this._getNextPageHash());
+        this.gotoRoute(this._getNextPageHash());
     }
 
     p.prevPage = function () {
-        hasher.setHash(this._getPrevPageHash());
+        this.gotoRoute(this._getPrevPageHash());
     }
 
     p.findRoute = function(idOrUrl){
@@ -81,14 +88,14 @@ define([
         var idx = this.routes.indexOf(this.currentRoute());
         var nextRoute = this.routes[idx];
         if (this.routes.length > idx + 1) nextRoute = this.routes[idx + 1];
-        return nextRoute.url;
+        return nextRoute;
     }
 
     p._getPrevPageHash = function () {
         var idx = this.routes.indexOf(this.currentRoute());
         var prevRoute = this.routes[idx];
         if (idx > 0) prevRoute = this.routes[idx - 1];
-        return prevRoute.url;
+        return prevRoute;
     }
 
     /**
@@ -98,45 +105,28 @@ define([
      */
     p._initRoutes = function () {
         var self = this;
-        crossroads.removeAllRoutes();
+        //crossroads.removeAllRoutes();
         var setupRoutes = function( childRoutes, parentRoute ) {
             ko.utils.arrayForEach(childRoutes, function (route) {
                 route.parent = parentRoute;
-                crossroads.addRoute(route.url, function (requestParams) {
-                    var r = ko.utils.extend(requestParams, route.params);
-                    self.currentRoute(route);
-                    self.routeChanged.dispatch(r, route.url);
-                });
+                if(route.url) {
+                    self.navigo
+                        .on(route.url, function (requestParams) {
+                            console.log( "navigo callback", route );
+                            var p = route.pageparams ? route.pageparams : {};
+                            var r = _.isObject(requestParams) ? ko.utils.extend(requestParams, p) : p;
+                            self.currentRoute( route );
+                            self.eventchannel.publish( events.ROUTER_ROUTE_CHANGED , {route:route, pageparams:r} );
+                        })
+                        .resolve();
 
-                if( route.children ) setupRoutes(route.children, route);
+                    if (route.children) setupRoutes(route.children, route);
+                }
             });
         }
         setupRoutes(this.routes, null);
     }
 
-
-    /**
-     * _activateCrossroads
-     * @private
-     */
-    p._activateCrossroads = function () {
-        var self = this;
-
-        function parseHash(newHash, oldHash) {
-            self.currentHash = newHash;
-            crossroads.parse(newHash);
-        }
-
-        function parseInitHash(newHash, oldHash) {
-            self.initalHash = newHash;
-            crossroads.parse(newHash);
-        }
-
-        crossroads.normalizeFn = crossroads.NORM_AS_OBJECT;
-        hasher.initialized.add(parseInitHash);
-        hasher.changed.add(parseHash);
-        hasher.init();
-    }
-
     return new Router();
 });
+

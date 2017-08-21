@@ -15,29 +15,33 @@
     },
     "dependencies": {
       "CreateJS/PreloadJS": "github:CreateJS/PreloadJS@^0.6.2",
-      "amplify": "github:mikehostetler/amplify@^1.1.2",
-      "hasher": "npm:hasher@^1.2.0",
-      "jquery": "npm:jquery@^3.2.1",
       "knockout": "github:knockout/knockout@^3.4.2",
+      "krasimir/navigo": "github:krasimir/navigo@^5.3.0",
       "lodash": "npm:lodash@^4.17.4",
       "low-res/formater": "github:low-res/formater@master",
+      "low-res/ko-systemjsloader": "github:low-res/ko-systemjsloader@master",
       "low-res/translator": "github:low-res/translator@master",
-      "millermedeiros/crossroads.js": "npm:crossroads@^0.12.2",
-      "preloadjs": "npm:preloadjs@^0.0.0"
+      "postal": "npm:postal@^2.0.5",
+      "systemjs/plugin-css": "github:systemjs/plugin-css@^0.1.35",
+      "systemjs/plugin-text": "github:systemjs/plugin-text@^0.0.11"
     },
     "devDependencies": {
       "jasmine-core": "npm:jasmine-core@^2.7.0",
       "karma": "npm:karma@^1.7.0",
       "karma-chrome-launcher": "npm:karma-chrome-launcher@^2.2.0",
+      "karma-coverage": "npm:karma-coverage@^1.1.1",
       "karma-jasmine": "npm:karma-jasmine@^1.1.0",
       "karma-systemjs": "npm:karma-systemjs@^0.16.0"
     }
   },
   "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
     "jasmine-core": "^2.7.0",
     "jspm": "^0.16.53",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-systemjs": "^0.16.0"
   }
