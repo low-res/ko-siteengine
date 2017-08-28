@@ -47,7 +47,7 @@ define([
     p.gotoPage = function (idOrUrl) {
         var knownRoute = this.findRoute( idOrUrl );
         if( knownRoute ) this.navigo.navigate( knownRoute.url );
-        else console.wran( "the given route id is not registerd! ", idOrUrl );
+        else console.warn( "the given route id is not registerd! ", idOrUrl );
     }
 
     p.nextPage = function () {

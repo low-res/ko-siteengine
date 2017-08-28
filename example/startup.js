@@ -4,8 +4,6 @@ define([
     'low-res/ko-systemjsloader'
 ], function($,ko) {
 
-    ko.components.register("navigation",    {systemjs: "/src/components/navigation/navigation"});
-    ko.components.register("pagecontainer", {systemjs: "/src/components/pagecontainer/pagecontainer"});
     ko.components.register("example-page",  {systemjs: "/src/components/example-page/example-page"});
 
     $(document).ready(function(){

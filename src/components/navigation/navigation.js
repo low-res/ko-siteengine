@@ -2,7 +2,7 @@ define([
     'knockout',
     './navigation.html!text',
     './navigation.css!css',
-    '/src/core/pageManager'
+    '../../core/pageManager'
 ], function ( ko, templateMarkup, styles, PageManager ) {
 
     var p = Navigation.prototype;

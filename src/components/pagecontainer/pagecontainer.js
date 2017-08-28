@@ -1,7 +1,7 @@
 define([
     'knockout',
     './pagecontainer.html!text',
-    '/src/core/pageManager'
+    '../../core/pageManager'
 ], function ( ko, templateMarkup, PageManager ) {
 
     var p = Pagecontainer.prototype;
