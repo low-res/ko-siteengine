@@ -8,7 +8,7 @@
   "license": "MIT",
   "format": "amd",
   "jspm": {
-    "main": "index",
+    "main": "src/index",
     "directories": {
       "lib": "src",
       "test": "tests"
