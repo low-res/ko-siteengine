@@ -14,7 +14,7 @@ define([
 
     p.navigate = function( route ){
         console.log( "navigate", arguments );
-        PageManager.changePageTo( route.id, {extraParam:12345} );
+        PageManager.changePageTo( route.id );
     }
 
     return {
