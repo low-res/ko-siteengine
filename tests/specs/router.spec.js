@@ -1,27 +1,92 @@
 define([
     "src/core/router",
-    "millermedeiros/crossroads"
-], function(router, crossroads) {
+], function(router) {
 
   describe('router Tests', function() {
+      var childRoute;
+
+
 
       it('should have empty routes array', function() {
           expect(router.routes).toBeDefined();
           expect(router.routes.length).toEqual(0);
-      })
+      });
 
-      it('should be possible to set routes', function() {
-          var routes =  [
+
+
+      describe('normal behaviour', function() {
+          beforeEach( function(){
+              childRoute = { id:2, url: 'client/settings/defaults', params: { page: 'jobs-page' } };
+              var routes =  [
+                  { id:3, url: 'detail', params: { page: 'page'    } },
+                  { id:5, url: 'client',        params: { page: 'page'    } }
+              ];
+              router.setRoutes(routes);
+          } );
+
+          it('should be possible to set routes', function() {
+              var routes =  [
                   { id:1, url: 'timenetries',   params: { page: 'timeentries-page'    } },
                   { id:2, url: 'jobs',          params: { page: 'jobs-page'           } }
               ];
-          router.setRoutes(routes);
-          expect(router.routes.length).toEqual(2);
+              router.setRoutes(routes);
+              expect(router.routes.length).toEqual(2);
+          });
+
+          it('should change the browser location when going to a page', function () {
+              var basePath = location.href;
+              console.log( basePath );
+              router.gotoPage(3);
+              var loc1 = location.href;
+              var test1 = loc1.endsWith('detail');
+              expect(test1).toBeTruthy("location.href "+loc1+ " should end with /client/detail ");
+
+              router.gotoPage("client");
+              var loc2 = location.href;
+              var test2 = loc2.endsWith('client');
+              expect(test2).toBeTruthy();
+          });
+
+
+
       });
 
-      describe('nested routes', function(){
-          var childRoute;
 
+
+      describe('filtering routes', function(){
+
+          it('should be possible to add middlewares to controll the change of routes', function(){
+                var routes = [
+                    { id:1, url:'allowed', params:{page:'' }},
+                    { id:2, url:'forbidden', params:{page:''} }
+                ];
+                router.setRoutes(routes);
+
+                var middleware = router.addMiddleware( function( params ) {
+                    console.log( params );
+                    if(params.url == "forbidden") return false;
+                    else return true;
+                });
+
+                router.gotoPage("allowed");
+                var loc = location.href;
+                var test = loc.endsWith('allowed');
+
+                router.gotoPage("forbidden");
+                var loc1 = location.href;
+                var test1 = loc1.endsWith('allowed');
+
+                router.removeMiddleware(middleware);
+                router.gotoPage("forbidden");
+                var loc2 = location.href;
+                var test2 = loc2.endsWith('forbidden');
+          });
+
+      });
+
+
+
+      describe('nested routes', function(){
           beforeEach( function(){
               childRoute = { id:2, url: 'client/settings/defaults', params: { page: 'jobs-page' } };
               var routes =  [
@@ -61,20 +126,6 @@ define([
               expect(rl[2].id).toEqual(5);
           });
 
-          it('should change the browser location when going to a page', function () {
-              var basePath = location.href;
-              console.log( basePath );
-              router.gotoPage(3);
-              var loc1 = location.href;
-              var test1 = loc1.endsWith('client/detail');
-              expect(test1).toBeTruthy("location.href "+loc1+ " should end with /client/detail ");
-
-              router.gotoPage("client/settings/defaults");
-              var loc2 = location.href;
-              var test2 = loc2.endsWith('client/settings/defaults');
-              expect(test2).toBeTruthy();
-          });
-
           it('should change url to given route', function( done ){
               var routes = router.getRoutes();
               var targetRoute = routes[0].children[1];
@@ -87,6 +138,8 @@ define([
               }, 200);
 
           });
-      })
+
+      });
+
   });
 });

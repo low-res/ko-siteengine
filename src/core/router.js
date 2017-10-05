@@ -15,24 +15,18 @@ define([
      * @constructor
      */
     function Router() {
-        var self = this;
+        var self            = this;
         this.currentRoute   = ko.observable({});
         this.routes         = [];
+        this.middlewares    = [];
 
         // eventbus
         this.eventchannel   = postal.channel( events.CHANNEL_ROUTER );
-
     }
 
     p.setRoutes = function( routes ) {
         this.routes = routes;
-
-        // setup navigo https://github.com/krasimir/navigo
-        var root = null;
-        var useHash = true; // Defaults to: false
-        var hash = '#!'; // Defaults to: '#'
-        this.navigo = new Navigo(root, useHash, hash);
-
+        this._initNavigo();
         this._initRoutes();
     }
 
@@ -46,6 +40,7 @@ define([
 
     p.gotoPage = function (idOrUrl) {
         var knownRoute = this.findRoute( idOrUrl );
+        console.log( "searched for route ", knownRoute );
         if( knownRoute ) this.navigo.navigate( knownRoute.url );
         else console.warn( "the given route id is not registerd! ", idOrUrl );
     }
@@ -84,6 +79,21 @@ define([
         return r;
     }
 
+    /**
+     * add an before-hook to the router.
+     * with this it is possible to include
+     * individual checks before allowing to go
+     * to the desired url.
+     */
+    p.addMiddleware = function ( func ) {
+        this.middlewares.push( func );
+        return func;
+    }
+
+    p.removeMiddleware = function (func) {
+        _.pull(this.middlewares, func);
+    }
+
     p._getNextPageHash = function () {
         var idx = this.routes.indexOf(this.currentRoute());
         var nextRoute = this.routes[idx];
@@ -105,7 +115,6 @@ define([
      */
     p._initRoutes = function () {
         var self = this;
-        //crossroads.removeAllRoutes();
         var setupRoutes = function( childRoutes, parentRoute ) {
             ko.utils.arrayForEach(childRoutes, function (route) {
                 route.parent = parentRoute;
@@ -125,6 +134,27 @@ define([
             });
         }
         setupRoutes(this.routes, null);
+    }
+
+
+
+    p._initNavigo = function () {
+        // setup navigo https://github.com/krasimir/navigo (the router doing the real work)
+        if(this.navigo) this.navigo.destroy();
+        var root = null;
+        var useHash = true; // Defaults to: false
+        var hash = '#!'; // Defaults to: '#'
+        this.navigo = new Navigo(root, useHash, hash);
+        this.navigo.hooks({
+            before: function(done, params) {
+                var res = true;
+                console.log( params );
+                _.forEach( self.middlewares, function( middleware ) {
+                    res = res && middleware( params );
+                });
+                done(res);
+            },
+        });
     }
 
     return new Router();
