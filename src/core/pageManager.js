@@ -53,6 +53,13 @@ define([
     }
 
 
+    p.addMiddleware = function ( func ) {
+        router.addMiddleware(func);
+    }
+
+    p.removeMiddleware = function ( func ) {
+        router.removeMiddleware(func);
+    }
 
     /**
      * handlePageChange
