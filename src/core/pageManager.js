@@ -24,6 +24,7 @@ define([
         this.currentPage                = ko.observable( {} ); // definition of the current page component
         this.pageTransition             = new PageTransition( this.currentPage );
         this.newPageParams              = null;
+        this.routerUseHash              = false;
 
         var subscription = postal.subscribe({
             channel: events.CHANNEL_ROUTER,
@@ -54,11 +55,18 @@ define([
 
 
     p.addMiddleware = function ( func ) {
+        console.log( "pageManager add Middleware", func );
         router.addMiddleware(func);
     }
 
+
     p.removeMiddleware = function ( func ) {
         router.removeMiddleware(func);
+    }
+
+
+    p.setRouterUseHash = function ( flag ) {
+        router.setRouterUseHash( flag );
     }
 
     /**
@@ -86,6 +94,7 @@ define([
         }
         return instance;
     }
+
 
     return PageManager.getInstance();
 });

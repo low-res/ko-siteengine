@@ -7,6 +7,8 @@ define([
 ], function (ko, _, Navigo, postal, events) {
 
     var p = Router.prototype;
+    var instance = null;
+    var instanceCount = 0;
 
     /**
      * Router
@@ -16,27 +18,37 @@ define([
      */
     function Router() {
         var self            = this;
+        this.c = ++instanceCount;
         this.currentRoute   = ko.observable({});
         this.routes         = [];
         this.middlewares    = [];
+        this._lastValidRoute= null;
+        this._routerUseHash = false;
 
         // eventbus
         this.eventchannel   = postal.channel( events.CHANNEL_ROUTER );
     }
 
+
+
     p.setRoutes = function( routes ) {
         this.routes = routes;
-        this._initNavigo();
-        this._initRoutes();
+        this._setupNavigo();
     }
+
+
 
     p.getRoutes = function() {
         return this.routes;
     }
 
+
+
     p.gotoRoute = function ( route ) {
         this.gotoPage(route.id);
     }
+
+
 
     p.gotoPage = function (idOrUrl) {
         var knownRoute = this.findRoute( idOrUrl );
@@ -45,13 +57,19 @@ define([
         else console.warn( "the given route id is not registerd! ", idOrUrl );
     }
 
+
+
     p.nextPage = function () {
         this.gotoRoute(this._getNextPageHash());
     }
 
+
+
     p.prevPage = function () {
         this.gotoRoute(this._getPrevPageHash());
     }
+
+
 
     p.findRoute = function(idOrUrl){
         var searchRoutes = function(routes, idOrUrl) {
@@ -67,6 +85,8 @@ define([
         }
         return searchRoutes(this.routes, idOrUrl);
     }
+
+
 
     p.rootLine = function() {
         var r = [ this.currentRoute() ];
@@ -87,12 +107,23 @@ define([
      */
     p.addMiddleware = function ( func ) {
         this.middlewares.push( func );
+        console.log( "addMiddleware", this );
+        this._setupNavigo();
         return func;
     }
+
+
 
     p.removeMiddleware = function (func) {
         _.pull(this.middlewares, func);
     }
+
+
+    p.setRouterUseHash = function ( flag ) {
+        this._routerUseHash = flag;
+        this._setupNavigo();
+    }
+
 
     p._getNextPageHash = function () {
         var idx = this.routes.indexOf(this.currentRoute());
@@ -101,12 +132,35 @@ define([
         return nextRoute;
     }
 
+
+
     p._getPrevPageHash = function () {
         var idx = this.routes.indexOf(this.currentRoute());
         var prevRoute = this.routes[idx];
         if (idx > 0) prevRoute = this.routes[idx - 1];
         return prevRoute;
     }
+
+
+
+    p._setupNavigo = function(){
+        this._initNavigo();
+        this._initRoutes();
+        this._reinitNavigoHooks();
+    }
+
+
+
+    p._initNavigo = function () {
+        // setup navigo https://github.com/krasimir/navigo (the router doing the real work)
+        if(this.navigo) this.navigo.destroy();
+        var root    = null;
+        var useHash = this._routerUseHash; // Defaults to: false
+        var hash    = '#!'; // Defaults to: '#'
+        this.navigo = new Navigo(root, useHash, hash);
+    }
+
+
 
     /**
      * _initRoutes
@@ -124,8 +178,12 @@ define([
                             console.log( "navigo callback", route );
                             var p = route.pageparams ? route.pageparams : {};
                             var r = _.isObject(requestParams) ? ko.utils.extend(requestParams, p) : p;
-                            self.currentRoute( route );
-                            self.eventchannel.publish( events.ROUTER_ROUTE_CHANGED , {route:route, pageparams:r} );
+
+                            if( self.currentRoute() != route ) {
+                                self.currentRoute( route );
+                                self._lastValidRoute = route;
+                                self.eventchannel.publish( events.ROUTER_ROUTE_CHANGED , {route:route, pageparams:r} );
+                            }
                         })
                         .resolve();
 
@@ -138,25 +196,35 @@ define([
 
 
 
-    p._initNavigo = function () {
-        // setup navigo https://github.com/krasimir/navigo (the router doing the real work)
-        if(this.navigo) this.navigo.destroy();
-        var root = null;
-        var useHash = true; // Defaults to: false
-        var hash = '#!'; // Defaults to: '#'
-        this.navigo = new Navigo(root, useHash, hash);
+    p._reinitNavigoHooks = function () {
+        var self = this;
+        var mw = this.middlewares;
         this.navigo.hooks({
             before: function(done, params) {
                 var res = true;
-                console.log( params );
+                var url = self.navigo.lastRouteResolved().url;
+                url = _.trimStart(url, '/');
+                var route = self.findRoute(url);
                 _.forEach( self.middlewares, function( middleware ) {
-                    res = res && middleware( params );
+                    res = res && middleware( url, route );
                 });
                 done(res);
-            },
+                if(!res && self._lastValidRoute) self.gotoRoute(self._lastValidRoute);
+            }
         });
     }
 
-    return new Router();
+
+
+    Router.getInstance = function () {
+        if(!instance) {
+            instance = new Router();
+        }
+        return instance;
+    }
+
+
+
+    return Router.getInstance();
 });
 

@@ -55,31 +55,48 @@ define([
 
       describe('filtering routes', function(){
 
-          it('should be possible to add middlewares to controll the change of routes', function(){
+          it('should be possible to add middlewares to controll the change of routes', function( done ){
                 var routes = [
                     { id:1, url:'allowed', params:{page:'' }},
                     { id:2, url:'forbidden', params:{page:''} }
                 ];
+
                 router.setRoutes(routes);
 
-                var middleware = router.addMiddleware( function( params ) {
-                    console.log( params );
-                    if(params.url == "forbidden") return false;
-                    else return true;
+                var middleware = router.addMiddleware( function( url, route ) {
+                  console.log( "params", url, route );
+                  if(url == "forbidden") return false;
+                  else return true;
                 });
 
                 router.gotoPage("allowed");
                 var loc = location.href;
+                console.log( loc );
                 var test = loc.endsWith('allowed');
+                expect(test).toBeTruthy();
 
-                router.gotoPage("forbidden");
-                var loc1 = location.href;
-                var test1 = loc1.endsWith('allowed');
+                setTimeout(function () {
+                    router.gotoPage("forbidden");
+                    setTimeout(function () {
+                        var loc1 = location.href;
+                        var test1 = loc1.endsWith('allowed');
+                        expect(test1).toBeTruthy();
+                    }, 200);
 
-                router.removeMiddleware(middleware);
-                router.gotoPage("forbidden");
-                var loc2 = location.href;
-                var test2 = loc2.endsWith('forbidden');
+                }, 500);
+
+              setTimeout(function () {
+                  router.removeMiddleware(middleware);
+                  router.gotoPage("forbidden");
+                  setTimeout(function () {
+                      var loc2 = location.href;
+                      console.log( loc2 );
+                      var test2 = loc2.endsWith('forbidden');
+                      expect(test2).toBeTruthy();
+                      done();
+                  }, 200);
+
+              }, 1500);
           });
 
       });
