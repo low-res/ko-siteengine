@@ -61,7 +61,7 @@ define([
         var self = this;
         ko.components.get(componentNameNewPage, function( componentDefinition ) {
             if( componentDefinition.createViewModel ) {
-                var newPageInstance = componentDefinition.createViewModel( {} );
+                var newPageInstance = componentDefinition.createViewModel( self.newPageVmParams );
                 self.newPageVmInstance = newPageInstance;
                 self.componentNameNewPage = componentNameNewPage;
                 self.pageViewModels[self.newPageUrl] = newPageInstance;
