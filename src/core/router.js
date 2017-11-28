@@ -24,6 +24,7 @@ define([
         this.middlewares    = [];
         this._lastValidRoute= null;
         this._routerUseHash = false;
+        this._notFoundRoute = null;
 
         // eventbus
         this.eventchannel   = postal.channel( events.CHANNEL_ROUTER );
@@ -118,7 +119,6 @@ define([
     }
 
 
-
     p.removeMiddleware = function (func) {
         _.pull(this.middlewares, func);
     }
@@ -127,6 +127,17 @@ define([
     p.setRouterUseHash = function ( flag ) {
         this._routerUseHash = flag;
         this._setupNavigo();
+    }
+
+
+    p.setNotFoundRoute = function ( route ) {
+        this._notFoundRoute = route;
+    }
+
+
+    p.getNotFoundRoute = function () {
+        if( this._notFoundRoute ) return this._notFoundRoute;
+        else return this.routes[0];
     }
 
 
@@ -197,8 +208,11 @@ define([
             });
         }
         setupRoutes(this.routes, null);
-    }
 
+        this.navigo.notFound(function () {
+            self.navigo.navigate( self.getNotFoundRoute() );
+        });
+    }
 
 
     p._reinitNavigoHooks = function () {
