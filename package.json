@@ -16,7 +16,7 @@
     "dependencies": {
       "CreateJS/PreloadJS": "github:CreateJS/PreloadJS@^0.6.2",
       "knockout": "github:knockout/knockout@^3.4.2",
-      "krasimir/navigo": "github:krasimir/navigo@^5.3.0",
+      "krasimir/navigo": "github:krasimir/navigo@^6.0",
       "lodash": "npm:lodash@^4.17.4",
       "low-res/formater": "github:low-res/formater@master",
       "low-res/ko-systemjsloader": "github:low-res/ko-systemjsloader@master",
