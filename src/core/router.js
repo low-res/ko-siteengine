@@ -54,7 +54,10 @@ define([
         var knownRoute = this.findRoute( idOrUrl );
         console.log( "searched for route ", knownRoute );
         if( knownRoute ) this.navigo.navigate( knownRoute.url );
-        else console.warn( "the given route id is not registerd! ", idOrUrl );
+        else {
+            console.warn( "the given route id is not registerd! ", idOrUrl );
+            this.navigo.navigate( idOrUrl );
+        }
     }
 
 
@@ -98,6 +101,8 @@ define([
         }
         return r;
     }
+
+
 
     /**
      * add an before-hook to the router.
@@ -175,11 +180,11 @@ define([
                 if(route.url) {
                     self.navigo
                         .on(route.url, function (requestParams) {
-                            console.log( "navigo callback", route );
+                            console.log( "navigo callback", route, requestParams );
                             var p = route.pageparams ? route.pageparams : {};
                             var r = _.isObject(requestParams) ? ko.utils.extend(requestParams, p) : p;
 
-                            if( self.currentRoute() != route ) {
+                            if( self.currentRoute() != route && self._checkURLagainstMiddlewear(route.url) ) {
                                 self.currentRoute( route );
                                 self._lastValidRoute = route;
                                 self.eventchannel.publish( events.ROUTER_ROUTE_CHANGED , {route:route, pageparams:r} );
@@ -201,17 +206,23 @@ define([
         var mw = this.middlewares;
         this.navigo.hooks({
             before: function(done, params) {
-                var res = true;
                 var url = self.navigo.lastRouteResolved().url;
-                url = _.trimStart(url, '/');
-                var route = self.findRoute(url);
-                _.forEach( self.middlewares, function( middleware ) {
-                    res = res && middleware( url, route );
-                });
+                var res = self._checkURLagainstMiddlewear(url);
                 done(res);
                 if(!res && self._lastValidRoute) self.gotoRoute(self._lastValidRoute);
             }
         });
+    }
+
+
+    p._checkURLagainstMiddlewear = function ( url ) {
+        var res = true;
+        url = _.trimStart(url, '/');
+        var route = this.findRoute(url);
+        _.forEach( this.middlewares, function( middleware ) {
+            res = res && middleware( url, route );
+        });
+        return res;
     }
 
 

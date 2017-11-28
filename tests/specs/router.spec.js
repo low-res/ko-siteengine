@@ -47,7 +47,13 @@ define([
               expect(test2).toBeTruthy();
           });
 
-
+            it('should transfer parameters to pageparams', function ( done ) {
+                var routes =  [
+                    { id:3, url: 'detail/:token', params: { page: 'page'    } }
+                ];
+                router.setRoutes(routes);
+                router.gotoPage('detail/12345');
+            })
 
       });
 
@@ -99,9 +105,35 @@ define([
               }, 1500);
           });
 
+          it('should call the middleware when deeplinking', function ( done ) {
+            var routes = [
+              { id:1, url:'yes', params:{page:'' }},
+              { id:2, url:'no', params:{page:''} },
+              { id:3, url:'login', params:{page:''} },
+            ];
+            router.setRouterUseHash(true);
+            router.setRoutes(routes);
+            router.addMiddleware( function( url, route ) {
+              console.log( "middleware ", url, route );
+              if(url == "no") {
+                  router.gotoPage('login');
+                  return false;
+              } else {
+                  return true;
+              }
+            });
+
+            location.href = location.href+"#!no";
+              // router.gotoPage("forbidden");
+              setTimeout(function () {
+                  console.log( "location.href AFTER:", location.href );
+                  expect( router.currentRoute().url ).toEqual('login');
+                  done();
+              }, 500);
+
+          });
+
       });
-
-
 
       describe('nested routes', function(){
           beforeEach( function(){
