@@ -195,7 +195,7 @@ define([
                             var p = route.pageparams ? route.pageparams : {};
                             var r = _.isObject(requestParams) ? ko.utils.extend(requestParams, p) : p;
 
-                            if( self.currentRoute() != route && self._checkURLagainstMiddlewear(route.url) ) {
+                            if( self.currentRoute() != route && self._checkURLagainstMiddlewear(route.url, r) ) {
                                 self.currentRoute( route );
                                 self._lastValidRoute = route;
                                 self.eventchannel.publish( events.ROUTER_ROUTE_CHANGED , {route:route, pageparams:r} );
@@ -229,12 +229,12 @@ define([
     }
 
 
-    p._checkURLagainstMiddlewear = function ( url ) {
+    p._checkURLagainstMiddlewear = function ( url, requestParams ) {
         var res = true;
         url = _.trimStart(url, '/');
         var route = this.findRoute(url);
         _.forEach( this.middlewares, function( middleware ) {
-            res = res && middleware( url, route );
+            res = res && middleware( url, route, requestParams );
         });
         return res;
     }

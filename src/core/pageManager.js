@@ -69,6 +69,17 @@ define([
         router.setRouterUseHash( flag );
     }
 
+
+    /**
+     * force refresh of current page (usful e.g. if language was changed)
+     */
+    p.refreshCurrentPage = function () {
+        var route = this.route();
+        var additionalParams = this.pageTransition.newPageVmParams;
+        this.pageTransition.handlePageChange( route.params, route.url, additionalParams );
+    }
+
+
     /**
      * handlePageChange
      * @param {object} routerEvent
