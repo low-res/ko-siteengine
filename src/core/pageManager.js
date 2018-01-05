@@ -44,8 +44,18 @@ define([
 
 
     p.changePageTo = function( idOrUrl, additionalParams ) {
-        this.newPageParams  = additionalParams || null;
-        router.gotoPage( idOrUrl );
+
+        var r = router.findRoute(idOrUrl);
+
+        // if we are already on the given page, try to set at least the params.
+        if( r != this.route() ) {
+            this.newPageParams  = additionalParams || null;
+            router.gotoPage( idOrUrl );
+        } else {
+            if( _.isFunction(this.pageTransition.currentPageVmInstance.setParams) ) {
+                this.pageTransition.currentPageVmInstance.setParams( additionalParams );
+            }
+        }
     }
 
 
