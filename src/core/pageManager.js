@@ -35,12 +35,10 @@ define([
     }
 
 
-
     p.init = function( routes ) {
         router.setRoutes( routes );
         this.routes( routes );
     }
-
 
 
     p.changePageTo = function( idOrUrl, additionalParams ) {
@@ -56,6 +54,11 @@ define([
                 this.pageTransition.currentPageVmInstance.setParams( additionalParams );
             }
         }
+    }
+
+
+    p.getRootline = function(){
+        return router.rootLine();
     }
 
 

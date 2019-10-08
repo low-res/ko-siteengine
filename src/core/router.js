@@ -119,9 +119,8 @@ define([
         var r = [ this.currentRoute() ];
         var p = this.currentRoute().parent;
         while(p) {
-            var pRoute = this.findRoute(p.id);
-            r.push( pRoute );
-            p = pRoute.parent;
+            r.push( p );
+            p = p.parent;
         }
         return r;
     }
