@@ -54,7 +54,13 @@ define([
     p.gotoPage = function (idOrUrl) {
         var knownRoute = this.findRoute( idOrUrl );
         console.log( "searched for route ", knownRoute );
-        if( knownRoute ) this.navigo.navigate( knownRoute.url );
+        if( knownRoute ) {
+            if( this._isUrlMatchingWithParametrisedRoute(knownRoute.url,idOrUrl) ) {
+                this.navigo.navigate( idOrUrl );
+            } else {
+                this.navigo.navigate( knownRoute.url );
+            }
+        }
         else {
             console.warn( "the given route id is not registerd! ", idOrUrl );
             this.navigo.navigate( idOrUrl );
@@ -75,11 +81,13 @@ define([
 
 
 
-    p.findRoute = function(idOrUrl){
+    p.findRoute = function(idOrUrl) {
+        var self = this;
+
         var searchRoutes = function(routes, idOrUrl) {
             var r = null;
             ko.utils.arrayForEach( routes, function(item) {
-                if( item.id == idOrUrl || item.url == idOrUrl ) {
+                if( item.id == idOrUrl || self._isUrlMatchingWithParametrisedRoute(item.url,idOrUrl) ) {
                     r = item;
                 } else {
                     if( item.children && r==null ) r = searchRoutes(item.children, idOrUrl);
@@ -90,6 +98,21 @@ define([
         return searchRoutes(this.routes, idOrUrl);
     }
 
+
+    p._isUrlMatchingWithParametrisedRoute = function( routeURL, currentURL ) {
+        var routeparts = routeURL.split("/");
+        var urlparts = currentURL.split("/");
+        if( routeparts.length == urlparts.length ) {
+            var res = true;
+            for(var i=0; i < routeparts.length; i++) {
+                var routepart = routeparts[i];
+                var urlpart = urlparts[i];
+                res = res && (routepart==urlpart || routepart[0] == ":")
+            }
+            return res;
+        }
+        return false;
+    }
 
 
     p.rootLine = function() {
