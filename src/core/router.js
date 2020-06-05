@@ -100,8 +100,9 @@ define([
 
 
     p._isUrlMatchingWithParametrisedRoute = function( routeURL, currentURL ) {
-        var routeparts = routeURL.split("/");
-        var urlparts = currentURL.split("/");
+        var routeparts = _.isString(routeURL) ? routeURL.split("/") : [];
+        var urlparts = _.isString(currentURL) ? currentURL.split("/") : [];
+
         if( routeparts.length == urlparts.length ) {
             var res = true;
             for(var i=0; i < routeparts.length; i++) {
