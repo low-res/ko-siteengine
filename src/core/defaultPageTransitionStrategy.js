@@ -126,7 +126,7 @@ define([
 
     p.preloadAssets = function() {
         var cPVI = this.currentPageVmInstance;
-        if( cPVI.getPreloadAssetsManifest && cPVI.getPreloadAssetsManifest().length > 0 ) {
+        if( cPVI && cPVI.getPreloadAssetsManifest && cPVI.getPreloadAssetsManifest().length > 0 ) {
             return preloader.preloadAssetsManifest( cPVI.getPreloadAssetsManifest() );
         } else {
             return Promise.resolve();
@@ -137,7 +137,7 @@ define([
     p.applyLoadedAssets = function( assets ) {
         var p = Promise.resolve();
         var cPVI = this.currentPageVmInstance;
-        if( cPVI.applyLoadedAssets ) p = cPVI.applyLoadedAssets( assets );
+        if( cPVI && cPVI.applyLoadedAssets ) p = cPVI.applyLoadedAssets( assets );
         return p;
     }
 
@@ -145,7 +145,7 @@ define([
     p.showAnimation = function(  ) {
         var p2 = Promise.resolve();
         var cPVI = this.currentPageVmInstance;
-        if( cPVI.showAnimation ) p2 = cPVI.showAnimation( );
+        if( cPVI && cPVI.showAnimation ) p2 = cPVI.showAnimation( );
         return p2;
     }
 
