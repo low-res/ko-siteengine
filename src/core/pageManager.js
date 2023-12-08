@@ -50,7 +50,7 @@ define([
             this.newPageParams  = additionalParams || null;
             router.gotoPage( idOrUrl );
         } else {
-            if( _.isFunction(this.pageTransition.currentPageVmInstance.setParams) ) {
+            if( _.isFunction(this.pageTransition.currentPageVmInstance && this.pageTransition.currentPageVmInstance.setParams) ) {
                 this.pageTransition.currentPageVmInstance.setParams( additionalParams );
             }
         }
